@@ -1,5 +1,4 @@
 <?php
-
 /**
  *
  * Code is mostly from the Customizer Export/Import plugin.
@@ -95,18 +94,22 @@ if (!class_exists('Sparkle_Demo_Customizer_Importer')) {
                 //For repeater fields
                 if (self::isJSON($value)) {
                     $data_array = json_decode($value);
-                    foreach ($data_array as $data_key => $data_object) {
-                        foreach ($data_object as $sub_data_key => $sub_data_value) {
-                            if (self::is_image_url($sub_data_value)) {
-                                $sub_data = self::media_handle_sideload($sub_data_value);
-                                if (!is_wp_error($sub_data)) {
-                                    $data_object->$sub_data_key = $sub_data->url;
+                    if(is_array($data_array)) {
+                        foreach ($data_array as $data_key => $data_object) {
+                            if(is_array($data_object)){
+                                foreach ($data_object as $sub_data_key => $sub_data_value) {
+                                    if (self::is_image_url($sub_data_value)) {
+                                        $sub_data = self::media_handle_sideload($sub_data_value);
+                                        if (!is_wp_error($sub_data)) {
+                                            $data_object->$sub_data_key = $sub_data->url;
+                                        }
+                                    } else {
+                                        $data_object->$sub_data_key = $sub_data_value;
+                                    }
                                 }
-                            } else {
-                                $data_object->$sub_data_key = $sub_data_value;
                             }
+                            $data_array[$data_key] = $data_object;
                         }
-                        $data_array[$data_key] = $data_object;
                     }
 
                     $mods[$key] = json_encode($data_array);

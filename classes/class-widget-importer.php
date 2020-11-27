@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Widget_Importer Class.
  *

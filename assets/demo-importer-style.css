@@ -20,7 +20,7 @@ img {
 	float: left;
 	margin-left: 2.5%;
 	margin-bottom: 30px;
-	width: 22.5%;
+	width: 30.7%;
 	border: 1px solid #ddd;
 	-webkit-box-shadow: 14px 14px 5px -3px rgba(0, 0, 0, 0.11);
 	box-shadow: 14px 14px 5px -3px rgba(0, 0, 0, 0.11);
@@ -194,7 +194,7 @@ img {
 #sparkle-theme-import-progress {
 	background: #FFF;
 	max-width: 800px;
-	min-width: 500px;
+	min-width: 800px;
 	text-align: center;
 	margin: 0 auto;
 	margin-top: 25px;

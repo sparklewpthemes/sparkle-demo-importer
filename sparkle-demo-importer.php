@@ -65,33 +65,36 @@ if (!class_exists('Sparkle_Demo_Importer_Main')) {
             require_once $this->this_dir . 'classes/class-widget-importer.php';
 
             // WP-Admin Menu
-            add_action('admin_menu', array($this, 'sparkle_theme_pro_menu'));
+            add_action('admin_menu', array($this, 'sparkle_demo_import_menu'));
 
             // Add necesary backend JS
             add_action('admin_enqueue_scripts', array($this, 'admin_script'));
 
             // Actions for the ajax call
-            add_action('wp_ajax_sparkle_theme_pro_install_demo', array($this, 'sparkle_theme_pro_install_demo'));
-            add_action('wp_ajax_sparkle_theme_pro_install_plugin', array($this, 'sparkle_theme_pro_install_plugin'));
-            add_action('wp_ajax_sparkle_theme_pro_download_files', array($this, 'sparkle_theme_pro_download_files'));
-            add_action('wp_ajax_sparkle_theme_pro_import_xml', array($this, 'sparkle_theme_pro_import_xml'));
-            add_action('wp_ajax_sparkle_theme_pro_customizer_import', array($this, 'sparkle_theme_pro_customizer_import'));
-            add_action('wp_ajax_sparkle_theme_pro_menu_import', array($this, 'sparkle_theme_pro_menu_import'));
-            add_action('wp_ajax_sparkle_theme_pro_theme_option', array($this, 'sparkle_theme_pro_theme_option'));
-            add_action('wp_ajax_sparkle_theme_pro_importing_widget', array($this, 'sparkle_theme_pro_importing_widget'));
-            add_action('wp_ajax_sparkle_theme_pro_importing_revslider', array($this, 'sparkle_theme_pro_importing_revslider'));
+            add_action('wp_ajax_sparkle_demo_import_install_demo', array($this, 'sparkle_demo_import_install_demo'));
+            add_action('wp_ajax_sparkle_demo_import_install_plugin', array($this, 'sparkle_demo_import_install_plugin'));
+            add_action('wp_ajax_sparkle_demo_import_download_files', array($this, 'sparkle_demo_import_download_files'));
+            add_action('wp_ajax_sparkle_demo_import_import_xml', array($this, 'sparkle_demo_import_import_xml'));
+            add_action('wp_ajax_sparkle_demo_import_customizer_import', array($this, 'sparkle_demo_import_customizer_import'));
+            add_action('wp_ajax_sparkle_demo_import_menu_import', array($this, 'sparkle_demo_import_menu_import'));
+            add_action('wp_ajax_sparkle_demo_import_theme_option', array($this, 'sparkle_demo_import_theme_option'));
+            add_action('wp_ajax_sparkle_demo_import_importing_widget', array($this, 'importing_widget'));
+            add_action('wp_ajax_sparkle_demo_import_importing_revslider', array($this, 'importing_revslider'));
         }
 
         /*
          * WP-ADMIN Menu for importer
          */
 
-        function sparkle_theme_pro_menu() {
-            add_submenu_page('themes.php', 'Sparkle OneClick Demo Install', 'Demo Import', 'manage_options', 'sparkle-theme-demo-importer', array($this, 'sparkle_theme_pro_display_demos'));
+        function sparkle_demo_import_menu() {
+            add_submenu_page('themes.php', 'Sparkle OneClick Demo Install', 'Demo Import', 'manage_options', 'sparkle-theme-demo-importer', array($this, 'sparkle_demo_import_display_demos'));
 
         }
 
-        /** demo list category **/
+        /**
+         * @package Sparkle Demo Importer
+         * @since 1.0.0
+         * */
         function sparkle_demo_import_category(){
             $categories = array_column($this->configFile, 'categories');
             if( is_array( $categories) && !empty( $categories )){
@@ -131,6 +134,10 @@ if (!class_exists('Sparkle_Demo_Importer_Main')) {
             }
         }
 
+        /**
+         * @package Sparkle Demo Importer
+         * @since 1.0.0
+         * */
         function sparkle_demo_import_welcome(){
             ?>
              <h2><?php echo sprintf(esc_html__('Welcome to the Sparkle Demo Importer for %s', 'sparkle-demo-importer'), $this->theme_name); ?></h2>
@@ -141,6 +148,12 @@ if (!class_exists('Sparkle_Demo_Importer_Main')) {
 
         }
 
+        /**
+         * @package Sparkle Demo Importer
+         * @since 1.0.0
+         * sparkle_demo_import_tag_search_filter
+         * Display the available demos
+         * */
         function sparkle_demo_import_tag_search_filter(){
             if (is_array($this->configFile) && !is_null($this->configFile)) {  
                 $tags = $pagebuilders = array();
@@ -209,11 +222,13 @@ if (!class_exists('Sparkle_Demo_Importer_Main')) {
             }
         }
 
-        /*
-         *  Display the available demos
-         */
-
-        function sparkle_theme_pro_display_demos() {
+        /**
+         * @package Sparkle Demo Importer
+         * @since 1.0.0
+         * sparkle_demo_import_display_demos
+         * Display the available demos
+         * */
+        function sparkle_demo_import_display_demos() {
             ?>
             <div class="wrap sparkle-theme-demo-importer-wrap">
                <?php $this->sparkle_demo_import_welcome(); ?>
@@ -370,11 +385,13 @@ if (!class_exists('Sparkle_Demo_Importer_Main')) {
             <?php
         }
 
-        /*
-         *  Do the install on ajax call
-         */
-
-        function sparkle_theme_pro_install_demo() {
+        /**
+         * @package Sparkle Demo Importer
+         * @since 1.0.0
+         * sparkle_demo_import_install_demo
+         * Do the install command on ajax call
+         * */
+        function sparkle_demo_import_install_demo() {
             check_ajax_referer('demo-importer-ajax', 'security');
 
             // Get the demo content from the right file
@@ -383,16 +400,21 @@ if (!class_exists('Sparkle_Demo_Importer_Main')) {
             $this->ajax_response['demo'] = $demo_slug;
 
             if (isset($_POST['reset']) && $_POST['reset'] == 'true') {
-                $this->database_reset();
+                $this->reset_database();
                 $this->ajax_response['complete_message'] = esc_html__('Database reset complete', 'sparkle-demo-importer');
             }
 
-            $this->ajax_response['next_step'] = 'sparkle_theme_pro_install_plugin';
+            $this->ajax_response['next_step'] = 'sparkle_demo_import_install_plugin';
             $this->ajax_response['next_step_message'] = esc_html__('Installing required plugins', 'sparkle-demo-importer');
             $this->send_ajax_response();
         }
 
-        function sparkle_theme_pro_install_plugin() {
+        /**
+         * @package Sparkle Demo Importer
+         * @since 1.0.0
+         * sparkle_demo_import_install_plugin
+         * */
+        function sparkle_demo_import_install_plugin() {
             check_ajax_referer('demo-importer-ajax', 'security');
 
             $demo_slug = isset($_POST['demo']) ? $_POST['demo'] : '';
@@ -409,12 +431,17 @@ if (!class_exists('Sparkle_Demo_Importer_Main')) {
             } else {
                 $this->ajax_response['complete_message'] = esc_html__('No plugin required to install', 'sparkle-demo-importer');
             }
-            $this->ajax_response['next_step'] = 'sparkle_theme_pro_download_files';
+            $this->ajax_response['next_step'] = 'sparkle_demo_import_download_files';
             $this->ajax_response['next_step_message'] = esc_html__('Downloading demo files', 'sparkle-demo-importer');
             $this->send_ajax_response();
         }
 
-        function sparkle_theme_pro_download_files() {
+        /**
+         * @package Sparkle Demo Importer
+         * @since 1.0.0
+         * sparkle_demo_import_download_files
+         * */
+        function sparkle_demo_import_download_files() {
             check_ajax_referer('demo-importer-ajax', 'security');
 
             $demo_slug = isset($_POST['demo']) ? $_POST['demo'] : '';
@@ -423,27 +450,39 @@ if (!class_exists('Sparkle_Demo_Importer_Main')) {
 
             $this->ajax_response['demo'] = $demo_slug;
             $this->ajax_response['complete_message'] = esc_html__('All demo files downloaded', 'sparkle-demo-importer');
-            $this->ajax_response['next_step'] = 'sparkle_theme_pro_import_xml';
+            $this->ajax_response['next_step'] = 'sparkle_demo_import_import_xml';
             $this->ajax_response['next_step_message'] = esc_html__('Importing posts, pages and medias. It may take a bit longer time', 'sparkle-demo-importer');
             $this->send_ajax_response();
         }
 
-        function sparkle_theme_pro_import_xml() {
+        /**
+         * @package Sparkle Demo Importer
+         * @since 1.0.0
+         * sparkle_demo_import_import_xml
+         * import xml file
+         * */
+        function sparkle_demo_import_import_xml() {
             check_ajax_referer('demo-importer-ajax', 'security');
 
             $demo_slug = isset($_POST['demo']) ? $_POST['demo'] : '';
 
             // Import XML content
-            $this->importDemoContent($demo_slug);
+            $this->import_demo_content($demo_slug);
 
             $this->ajax_response['demo'] = $demo_slug;
             $this->ajax_response['complete_message'] = esc_html__('All content imported', 'sparkle-demo-importer');
-            $this->ajax_response['next_step'] = 'sparkle_theme_pro_customizer_import';
+            $this->ajax_response['next_step'] = 'sparkle_demo_import_customizer_import';
             $this->ajax_response['next_step_message'] = esc_html__('Importing customizer settings', 'sparkle-demo-importer');
             $this->send_ajax_response();
         }
 
-        function sparkle_theme_pro_customizer_import() {
+        /**
+         * @package Sparkle Demo Importer
+         * @since 1.0.0
+         * sparkle_demo_import_customizer_import
+         * import customizer data
+         * */
+        function sparkle_demo_import_customizer_import() {
             check_ajax_referer('demo-importer-ajax', 'security');
 
             $demo_slug = isset($_POST['demo']) ? $_POST['demo'] : '';
@@ -460,12 +499,18 @@ if (!class_exists('Sparkle_Demo_Importer_Main')) {
             }
 
             $this->ajax_response['demo'] = $demo_slug;
-            $this->ajax_response['next_step'] = 'sparkle_theme_pro_menu_import';
+            $this->ajax_response['next_step'] = 'sparkle_demo_import_menu_import';
             $this->ajax_response['next_step_message'] = esc_html__('Setting primary menu', 'sparkle-demo-importer');
             $this->send_ajax_response();
         }
 
-        function sparkle_theme_pro_menu_import() {
+        /**
+         * @package Sparkle Demo Importer
+         * @since 1.0.0
+         * sparkle_demo_import_menu_import
+         * set menu
+         * */
+        function sparkle_demo_import_menu_import() {
             check_ajax_referer('demo-importer-ajax', 'security');
 
             $demo_slug = isset($_POST['demo']) ? $_POST['demo'] : '';
@@ -478,12 +523,18 @@ if (!class_exists('Sparkle_Demo_Importer_Main')) {
 
             $this->ajax_response['demo'] = $demo_slug;
             $this->ajax_response['complete_message'] = esc_html__('Primary menu saved', 'sparkle-demo-importer');
-            $this->ajax_response['next_step'] = 'sparkle_theme_pro_theme_option';
+            $this->ajax_response['next_step'] = 'sparkle_demo_import_theme_option';
             $this->ajax_response['next_step_message'] = esc_html__('Importing theme option settings', 'sparkle-demo-importer');
             $this->send_ajax_response();
         }
 
-        function sparkle_theme_pro_theme_option() {
+        /**
+         * @package Sparkle Demo Importer
+         * @since 1.0.0
+         * sparkle_demo_import_theme_option
+         * import widget file
+         * */
+        function sparkle_demo_import_theme_option() {
             check_ajax_referer('demo-importer-ajax', 'security');
 
             $demo_slug = isset($_POST['demo']) ? $_POST['demo'] : '';
@@ -503,16 +554,20 @@ if (!class_exists('Sparkle_Demo_Importer_Main')) {
             }
 
             $this->ajax_response['demo'] = $demo_slug;
-            $this->ajax_response['next_step'] = 'sparkle_theme_pro_importing_widget';
+            $this->ajax_response['next_step'] = 'sparkle_demo_import_importing_widget';
             $this->ajax_response['next_step_message'] = esc_html__('Importing Widgets', 'sparkle-demo-importer');
             $this->send_ajax_response();
         }
 
-        function sparkle_theme_pro_importing_widget() {
+        /**
+         * @package Sparkle Demo Importer
+         * @since 1.0.0
+         * importing_widget
+         * import widget file
+         * */
+        function importing_widget() {
             check_ajax_referer('demo-importer-ajax', 'security');
-
             $demo_slug = isset($_POST['demo']) ? $_POST['demo'] : '';
-
             $widget_filepath = $this->demo_upload_dir($demo_slug) . '/widget.wie';
 
             if (file_exists($widget_filepath)) {
@@ -525,12 +580,18 @@ if (!class_exists('Sparkle_Demo_Importer_Main')) {
             }
 
             $this->ajax_response['demo'] = $demo_slug;
-            $this->ajax_response['next_step'] = 'sparkle_theme_pro_importing_revslider';
+            $this->ajax_response['next_step'] = 'wp_ajax_sparkle_demo_import_importing_revslider';
             $this->ajax_response['next_step_message'] = esc_html__('Importing Revolution slider', 'sparkle-demo-importer');
             $this->send_ajax_response();
         }
 
-        function sparkle_theme_pro_importing_revslider() {
+        /**
+         * @package Sparkle Demo Importer
+         * @since 1.0.0
+         * sparkle_mkdir
+         * create directory recursively 
+         * */
+        function importing_revslider() {
             check_ajax_referer('demo-importer-ajax', 'security');
 
             $demo_slug = isset($_POST['demo']) ? $_POST['demo'] : '';
@@ -556,10 +617,22 @@ if (!class_exists('Sparkle_Demo_Importer_Main')) {
             $this->send_ajax_response();
         }
 
+        /**
+         * @package Sparkle Demo Importer
+         * @since 1.0.0
+         * sparkle_mkdir
+         * create directory recursively 
+         * */
         public function sparkle_mkdir($path){
             return mkdir($path, 0777, true);
         }
 
+        /**
+         * @package Sparkle Demo Importer
+         * @since 1.0.0
+         * download_files
+         * Download files from given url
+         * */   
         public function download_files($external_url) {
             // Make sure we have the dependency.
             if (!function_exists('WP_Filesystem')) {
@@ -598,11 +671,13 @@ if (!class_exists('Sparkle_Demo_Importer_Main')) {
             
         }
 
-        /*
+        /**
+         * @package Sparkle Demo Importer
+         * @since 1.0.0
+         * reset_database
          * Reset the database, if the case
-         */
-
-        function database_reset() {
+         * */
+        function reset_database() {
             global $wpdb;
             $options = array(
                 'offset' => 0,
@@ -708,10 +783,12 @@ if (!class_exists('Sparkle_Demo_Importer_Main')) {
             return ( $dir != $this->uploads_dir['basedir'] ) ? rmdir($dir) : true;
         }
 
-        /*
+        /**
+         * @package Sparkle Demo Importer
+         * @since 1.0.0
+         * setMenu
          * Set the menu on theme location
-         */
-
+         * */
         function setMenu($menuArray) {
 
             if (!$menuArray) {
@@ -719,27 +796,24 @@ if (!class_exists('Sparkle_Demo_Importer_Main')) {
             }
 
             $locations = get_theme_mod('nav_menu_locations');
-
             foreach ($menuArray as $menuId => $menuname) {
                 $menu_exists = wp_get_nav_menu_object($menuname);
-
                 if (!$menu_exists) {
                     $term_id_of_menu = wp_create_nav_menu($menuname);
                 } else {
                     $term_id_of_menu = $menu_exists->term_id;
                 }
-
                 $locations[$menuId] = $term_id_of_menu;
             }
-
             set_theme_mod('nav_menu_locations', $locations);
         }
 
-        /*
+        /**
+         * @package Sparkle Demo Importer
+         * @since 1.0.0
          * Import demo XML content
          */
-
-        function importDemoContent($slug) {
+        function import_demo_content($slug) {
 
             if (!defined('WP_LOAD_IMPORTERS'))
                 define('WP_LOAD_IMPORTERS', true);
@@ -787,11 +861,21 @@ if (!class_exists('Sparkle_Demo_Importer_Main')) {
             }
         }
 
+        /**
+         * @package Sparkle Demo Importer
+         * @since 1.0.0
+         * demo_upload_dir
+         */
         function demo_upload_dir($path = '') {
             $upload_dir = $this->uploads_dir['basedir'] . '/demo-pack/' . $path;
             return $upload_dir;
         }
 
+        /**
+         * @package Sparkle Demo Importer
+         * @since 1.0.0
+         * install_plugins
+         */
         function install_plugins($slug) {
             $demo = $this->configFile[$slug];
 
@@ -804,14 +888,19 @@ if (!class_exists('Sparkle_Demo_Importer_Main')) {
                 $location = isset($plugin['location']) ? $plugin['location'] : '';
 
                 if ($source == 'wordpress') {
-                    $this->plugin_installer_callback($file_path, $plugin_slug);
+                    $this->plugin_callback($file_path, $plugin_slug);
                 } else {
-                    $this->plugin_offline_installer_callback($file_path, $location);
+                    $this->plugin_installer_callback($file_path, $location);
                 }
             }
         }
 
-        public function plugin_installer_callback($path, $slug) {
+        /**
+         * @package Sparkle Demo Importer
+         * @since 1.0.0
+         * plugin_callback
+         */
+        public function plugin_callback($path, $slug) {
             $plugin_status = $this->plugin_status($path);
 
             if ($plugin_status == 'install') {
@@ -826,16 +915,21 @@ if (!class_exists('Sparkle_Demo_Importer_Main')) {
                 $skin = new WP_Ajax_Upgrader_Skin();
                 $upgrader = new Plugin_Upgrader($skin);
                 $upgrader->install($api->download_link);
-
                 $this->activate_plugin($path);
                 $this->plugin_install_count++;
+
             } else if ($plugin_status == 'inactive') {
                 $this->activate_plugin($path);
                 $this->plugin_install_count++;
             }
         }
 
-        public function plugin_offline_installer_callback($path, $external_url) {
+        /**
+         * @package Sparkle Demo Importer
+         * @since 1.0.0
+         * Offline Plugin installer
+         */
+        public function plugin_installer_callback($path, $external_url) {
 
             $plugin_status = $this->plugin_status($path);
 
@@ -879,8 +973,12 @@ if (!class_exists('Sparkle_Demo_Importer_Main')) {
             }
         }
 
-        /* Plugin API */
-
+        /**
+         * @package Sparkle Demo Importer
+         * @since 1.0.0
+         * call_plugin_api
+         * Call plugin api
+         * */
         public function call_plugin_api($slug) {
             include_once ABSPATH . 'wp-admin/includes/plugin-install.php';
 
@@ -907,52 +1005,72 @@ if (!class_exists('Sparkle_Demo_Importer_Main')) {
             return $call_api;
         }
 
+        /**
+         * @package Sparkle Demo Importer
+         * @since 1.0.0
+         * activate_plugin
+         * Check plugin files is exits or not
+         * */
         public function activate_plugin($file_path) {
             if ($file_path) {
                 $activate = activate_plugin($file_path, '', false, true);
             }
         }
 
-        /* Check if plugin is active or not */
-
+        /**
+         * @package Sparkle Demo Importer
+         * @since 1.0.0
+         * plugin_status
+         * Check plugin files is exits or not
+         * */
         public function plugin_status($file_path) {
             $status = 'install';
-
             $plugin_path = WP_PLUGIN_DIR . '/' . $file_path;
-
             if (file_exists($plugin_path)) {
                 $status = is_plugin_active($file_path) ? 'active' : 'inactive';
             }
             return $status;
         }
 
+        /**
+         * @package Sparkle Demo Importer
+         * @since 1.0.0
+         * get_plugin_status
+         * Plugin status compare
+         */
+        
         public function get_plugin_status($status) {
             switch ($status) {
                 case 'install':
-                    $plugin_status = esc_html__('Not Installed', 'sparkle-demo-importer');
+                    $status = esc_html__('Not Installed', 'sparkle-demo-importer');
                     break;
-
                 case 'active':
-                    $plugin_status = esc_html__('Installed and Active', 'sparkle-demo-importer');
+                    $status = esc_html__('Installed and Active', 'sparkle-demo-importer');
                     break;
-
                 case 'inactive':
-                    $plugin_status = esc_html__('Installed but Not Active', 'sparkle-demo-importer');
+                    $status = esc_html__('Installed but Not Active', 'sparkle-demo-importer');
                     break;
             }
-            return $plugin_status;
+            return $status;
         }
 
+        /**
+         * @package Sparkle Demo Importer
+         * @since 1.0.0
+         * send_ajax_response
+         */
         public function send_ajax_response() {
             $json = wp_json_encode($this->ajax_response);
             echo $json;
             die();
         }
 
-        /*
-          Register necessary backend js
+        /**
+         * @package Sparkle Demo Importer
+         * @since 1.0.0
+         * admin_script
+         * Register necessary admin js
          */
-
         function admin_script() {
             $localdata = array(
                 'nonce' => wp_create_nonce('demo-importer-ajax'),
@@ -963,8 +1081,8 @@ if (!class_exists('Sparkle_Demo_Importer_Main')) {
                 'import_success' => '<h2>' . esc_html__('All done. Have fun!', 'sparkle-demo-importer') . '</h2><p>' . esc_html__('Your website has been successfully setup.', 'sparkle-demo-importer') . '</p><a class="button" target="_blank" href="' . esc_url(home_url('/')) . '">View your Website</a><a class="button" href="' . esc_url(admin_url('/admin.php?page=sparkle-theme-demo-importer')) . '">Go Back</a>'
             );
 
-            wp_enqueue_script('isotope-pkgd', $this->this_uri . 'isotope.pkgd.js', array('jquery'), SPARKLE_DEMOI_VERSION, true);
-            wp_enqueue_script('sparkle-theme-demo-ajax', $this->this_uri . 'assets/demo-importer-ajax.js', array('jquery'), SPARKLE_DEMOI_VERSION, true);
+            wp_enqueue_script('isotope-pkgd', $this->this_uri . 'assets/isotope.pkgd.js', array('jquery'), SPARKLE_DEMOI_VERSION, true);
+            wp_enqueue_script('sparkle-theme-demo-ajax', $this->this_uri . 'assets/demo-importer-ajax.js', array('jquery', 'imagesloaded'), SPARKLE_DEMOI_VERSION, true);
             wp_localize_script('sparkle-theme-demo-ajax', 'sparkle_ajax_data', $localdata);
             wp_enqueue_style('sparkle-theme-demo-style', $this->this_uri . 'assets/demo-importer-style.css', array(), SPARKLE_DEMOI_VERSION);
         }

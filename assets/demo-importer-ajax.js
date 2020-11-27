@@ -50,7 +50,7 @@
         var info = {
             demo: demo,
             reset: reset,
-            next_step: 'sparkle_theme_pro_install_demo',
+            next_step: 'sparkle_demo_import_install_demo',
             next_step_message: reset_message
         };
 
