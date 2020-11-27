@@ -6,7 +6,6 @@
  *
  */
 final class Sparkle_DemoImporter_Customzer_Option extends WP_Customize_Setting {
-
     /**
      * Import an option value for this setting.
      *
@@ -16,5 +15,4 @@ final class Sparkle_DemoImporter_Customzer_Option extends WP_Customize_Setting {
     public function import($value) {
         $this->update($value);
     }
-
 }
