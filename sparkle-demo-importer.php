@@ -87,7 +87,7 @@ if (!class_exists('Sparkle_Demo_Importer_Main')) {
          */
 
         function sparkle_demo_import_menu() {
-            add_submenu_page('themes.php', 'Sparkle OneClick Demo Install', 'Demo Import', 'manage_options', 'sparkle-theme-demo-importer', array($this, 'sparkle_demo_import_display_demos'));
+            add_submenu_page('themes.php', 'Sparkle OneClick Demo Installer', 'Sparkle Demo Import', 'manage_options', 'sparkle-theme-demo-importer', array($this, 'sparkle_demo_import_display_demos'));
 
         }
 
@@ -580,7 +580,7 @@ if (!class_exists('Sparkle_Demo_Importer_Main')) {
             }
 
             $this->ajax_response['demo'] = $demo_slug;
-            $this->ajax_response['next_step'] = 'wp_ajax_sparkle_demo_import_importing_revslider';
+            $this->ajax_response['next_step'] = 'sparkle_demo_import_importing_revslider';
             $this->ajax_response['next_step_message'] = esc_html__('Importing Revolution slider', 'sparkle-demo-importer');
             $this->send_ajax_response();
         }
@@ -828,6 +828,8 @@ if (!class_exists('Sparkle_Demo_Importer_Main')) {
             // Import demo content from XML
             if (class_exists('WP_Import')) {
                 $import_filepath = $this->demo_upload_dir($slug) . '/content.xml'; // Get the xml file from directory 
+                $home_slug = isset($this->configFile[$slug]['home_slug']) ? $this->configFile[$slug]['home_slug'] : 'home';
+                $blog_slug = isset($this->configFile[$slug]['blog_slug']) ? $this->configFile[$slug]['blog_slug'] : 'blog';
 
                 if (file_exists($import_filepath)) {
                     $wp_import = new WP_Import();
@@ -840,7 +842,7 @@ if (!class_exists('Sparkle_Demo_Importer_Main')) {
                     //complete import
 
                     // set homepage as front page
-                    $page = get_page_by_path('home');
+                    $page = get_page_by_path($home_slug);
                     if ($page) {
                         update_option('show_on_front', 'page');
                         update_option('page_on_front', $page->ID);
@@ -852,7 +854,7 @@ if (!class_exists('Sparkle_Demo_Importer_Main')) {
                         }
                     }
 
-                    $blog = get_page_by_path('blog');
+                    $blog = get_page_by_path($blog_slug);
                     if ($blog) {
                         update_option('show_on_front', 'page');
                         update_option('page_for_posts', $blog->ID);
