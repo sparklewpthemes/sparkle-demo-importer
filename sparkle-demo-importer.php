@@ -1,11 +1,11 @@
 <?php
 /**
  * Plugin Name: Sparkle Demo Importer
- * Plugin URI: 
- * Description: Import Demo Site by one click.
+ * Plugin URI: https://github.com/sparklewpthemes/sparkle-demo-importer
+ * Description: Import Sparkle Themes Demo Site by one click.
  * Version: 1.0.0
  * Author: sparklewpthemes
- * Author URI:  https://sparklewpthemes
+ * Author URI:  https://sparklewpthemes.com
  * Text Domain: sparkle-demo-importer
  * License: GPL-2.0+
  * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
