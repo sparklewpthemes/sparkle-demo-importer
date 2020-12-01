@@ -395,7 +395,7 @@ if (!class_exists('Sparkle_Demo_Importer_Main')) {
             check_ajax_referer('demo-importer-ajax', 'security');
 
             // Get the demo content from the right file
-            $demo_slug = isset($_POST['demo']) ? $_POST['demo'] : '';
+            $demo_slug = isset($_POST['demo']) ? sanitize_text_field(wp_unslash($_POST['demo'])) : '';
 
             $this->ajax_response['demo'] = $demo_slug;
 
@@ -417,7 +417,7 @@ if (!class_exists('Sparkle_Demo_Importer_Main')) {
         function sparkle_demo_import_install_plugin() {
             check_ajax_referer('demo-importer-ajax', 'security');
 
-            $demo_slug = isset($_POST['demo']) ? $_POST['demo'] : '';
+            $demo_slug = isset($_POST['demo']) ? sanitize_text_field(wp_unslash($_POST['demo'])) : '';
 
             // Install Required Plugins
             $this->install_plugins($demo_slug);
@@ -444,7 +444,7 @@ if (!class_exists('Sparkle_Demo_Importer_Main')) {
         function sparkle_demo_import_download_files() {
             check_ajax_referer('demo-importer-ajax', 'security');
 
-            $demo_slug = isset($_POST['demo']) ? $_POST['demo'] : '';
+            $demo_slug = isset($_POST['demo']) ? sanitize_text_field(wp_unslash($_POST['demo'])) : '';
 
             $this->download_files($this->configFile[$demo_slug]['external_url']);
 
@@ -464,7 +464,7 @@ if (!class_exists('Sparkle_Demo_Importer_Main')) {
         function sparkle_demo_import_import_xml() {
             check_ajax_referer('demo-importer-ajax', 'security');
 
-            $demo_slug = isset($_POST['demo']) ? $_POST['demo'] : '';
+            $demo_slug = isset($_POST['demo']) ? sanitize_text_field(wp_unslash($_POST['demo'])) : '';
 
             // Import XML content
             $this->import_demo_content($demo_slug);
@@ -485,7 +485,7 @@ if (!class_exists('Sparkle_Demo_Importer_Main')) {
         function sparkle_demo_import_customizer_import() {
             check_ajax_referer('demo-importer-ajax', 'security');
 
-            $demo_slug = isset($_POST['demo']) ? $_POST['demo'] : '';
+            $demo_slug = isset($_POST['demo']) ? sanitize_text_field(wp_unslash($_POST['demo'])) : '';
 
             $customizer_filepath = $this->demo_upload_dir($demo_slug) . '/customizer.dat';
 
@@ -513,7 +513,7 @@ if (!class_exists('Sparkle_Demo_Importer_Main')) {
         function sparkle_demo_import_menu_import() {
             check_ajax_referer('demo-importer-ajax', 'security');
 
-            $demo_slug = isset($_POST['demo']) ? $_POST['demo'] : '';
+            $demo_slug = isset($_POST['demo']) ? sanitize_text_field(wp_unslash($_POST['demo'])) : '';
 
             $menu_array = isset($this->configFile[$demo_slug]['menuArray']) ? $this->configFile[$demo_slug]['menuArray'] : '';
             // Set menu
@@ -537,7 +537,7 @@ if (!class_exists('Sparkle_Demo_Importer_Main')) {
         function sparkle_demo_import_theme_option() {
             check_ajax_referer('demo-importer-ajax', 'security');
 
-            $demo_slug = isset($_POST['demo']) ? $_POST['demo'] : '';
+            $demo_slug = isset($_POST['demo']) ? sanitize_text_field(wp_unslash($_POST['demo'])) : '';
 
             $themeoption_filepath = $this->demo_upload_dir($demo_slug) . '/themeoption.json';
 
@@ -567,7 +567,7 @@ if (!class_exists('Sparkle_Demo_Importer_Main')) {
          * */
         function importing_widget() {
             check_ajax_referer('demo-importer-ajax', 'security');
-            $demo_slug = isset($_POST['demo']) ? $_POST['demo'] : '';
+            $demo_slug = isset($_POST['demo']) ? sanitize_text_field(wp_unslash($_POST['demo'])) : '';
             $widget_filepath = $this->demo_upload_dir($demo_slug) . '/widget.wie';
 
             if (file_exists($widget_filepath)) {
@@ -588,13 +588,13 @@ if (!class_exists('Sparkle_Demo_Importer_Main')) {
         /**
          * @package Sparkle Demo Importer
          * @since 1.0.0
-         * sparkle_mkdir
+         * importing_revslider
          * create directory recursively 
          * */
         function importing_revslider() {
             check_ajax_referer('demo-importer-ajax', 'security');
 
-            $demo_slug = isset($_POST['demo']) ? $_POST['demo'] : '';
+            $demo_slug = isset($_POST['demo']) ? sanitize_text_field(wp_unslash($_POST['demo'])) : '';
 
             // Get the zip file path
             $sliderFile = $this->demo_upload_dir($demo_slug) . '/revslider.zip';
@@ -884,10 +884,10 @@ if (!class_exists('Sparkle_Demo_Importer_Main')) {
             $plugins = $demo['plugins'];
 
             foreach ($plugins as $plugin_slug => $plugin) {
-                $name = isset($plugin['name']) ? $plugin['name'] : '';
-                $source = isset($plugin['source']) ? $plugin['source'] : '';
-                $file_path = isset($plugin['file_path']) ? $plugin['file_path'] : '';
-                $location = isset($plugin['location']) ? $plugin['location'] : '';
+                $name = isset($plugin['name']) ? sanitize_text_field($plugin['name']) : '';
+                $source = isset($plugin['source']) ? sanitize_text_field($plugin['source']) : '';
+                $file_path = isset($plugin['file_path']) ? sanitize_text_field($plugin['file_path']) : '';
+                $location = isset($plugin['location']) ? sanitize_text_field($plugin['location']) : '';
 
                 if ($source == 'wordpress') {
                     $this->plugin_callback($file_path, $plugin_slug);

@@ -1,9 +1,8 @@
 === Sparkle Demo Importer ===
 Contributors: sparklewpthemes
-Donate link: 
 Tags: importer, demo data, demo importer, sparkle demo, sparkle demo data, sparklestore demo data, demo import, demo content
 Requires at least: 4.0
-Tested up to: 4.8
+Tested up to: 5.5.3
 Stable tag: trunk
 Requires PHP: 5.6
 License: GPLv2 or later
